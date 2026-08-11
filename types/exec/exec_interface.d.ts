@@ -1,6 +1,6 @@
 import { Node, Type } from "../wgsl_ast.js";
 import { ExecContext } from "./exec_context.js";
-import { TypeInfo } from "../wgsl_reflect.js";
+import { TypeInfo } from "../reflect/info";
 import { Data } from "../wgsl_ast.js";
 export declare class ExecInterface {
     evalExpression(node: Node, context: ExecContext): Data | null;

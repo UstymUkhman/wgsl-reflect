@@ -11,7 +11,6 @@ export declare class WgslParser {
     _context: ParseContext;
     _exec: WgslExec;
     _forwardTypeCount: number;
-    static Parse(tokensOrCode: Token[] | string): AST.Statement[];
     parse(tokensOrCode: Token[] | string): AST.Statement[];
     _forwardType(t: AST.Type | null): AST.Type | null;
     _initialize(tokensOrCode: Token[] | string): void;

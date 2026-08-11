@@ -2,7 +2,7 @@ import { Node, Type, Let, Var, Const, If, For, While, Loop, Assign, Increment, O
 import { Data, ControlData } from "./wgsl_ast.js";
 import { Reflect } from "./reflect/reflect.js";
 import { TypeInfo } from "./reflect/info.js";
-import { ExecContext, FunctionRef } from "./exec/exec_context.js";
+import { ExecContext } from "./exec/exec_context.js";
 import { ExecInterface } from "./exec/exec_interface.js";
 import { BuiltinFunctions } from "./exec/builtin_functions.js";
 export declare class WgslExec extends ExecInterface {
@@ -17,16 +17,11 @@ export declare class WgslExec extends ExecInterface {
     typeInfo: Record<string, TypeInfo>;
     constructor(ast?: Node[], context?: ExecContext);
     getVariableValue(name: string): number | number[] | null;
-    execute(config?: Object): void;
-    dispatchWorkgroups(kernel: string, dispatchCount: number | number[], bindGroups: Object, config?: Object): void;
     static readonly _breakObj: ControlData;
     static readonly _continueObj: ControlData;
     execStatement(stmt: Node, context: ExecContext): Data | null;
     evalExpression(node: Node, context: ExecContext): Data | null;
     getTypeInfo(type: Type | string): TypeInfo | null;
-    _setOverrides(constants: Object, context: ExecContext): void;
-    _dispatchWorkgroup(f: FunctionRef, workgroup_id: number[], context: ExecContext): void;
-    _dispatchExec(f: FunctionRef, context: ExecContext): void;
     getVariableName(node: Node, context: ExecContext): string | null;
     _execStatements(statements: Node[], context: ExecContext): Data | null;
     _call(node: Call, context: ExecContext): void;
