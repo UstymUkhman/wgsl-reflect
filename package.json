@@ -43,14 +43,14 @@
     "javascript",
     "html5"
   ],
-
   "devDependencies": {
-    "rollup": "^2.60.0",
-    "tslib": "^2.6.1",
-    "@rollup/plugin-typescript": "^11.1.2",
-    "@rollup/plugin-terser": "^0.4.4",
-    "webgpu": "^0.3.0",
-    "jsdom": "^26.1.0"
+    "@rollup/plugin-terser": "^1.0.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "jsdom": "^30.0.1",
+    "rollup": "^4.62.4",
+    "tslib": "^2.8.1",
+    "typescript": "6.0.3",
+    "webgpu": "^0.4.0"
   },
   "jspm": {
     "files": [
