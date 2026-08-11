@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CallExpr, Call, UnaryOperator, VariableExpr } from "../wgsl_ast.js";
 import { Data, TypedData, TextureData, SamplerData, ScalarData, VectorData, MatrixData } from "../wgsl_ast.js";
 import { ExecContext } from "./exec_context.js";

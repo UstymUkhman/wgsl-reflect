@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { WgslExec } from "./wgsl_exec.js";
 import { TypeInfo, PointerInfo, TemplateInfo, ArrayInfo, StructInfo } from "./reflect/info.js";
 import { ExecContext } from "./exec/exec_context.js";

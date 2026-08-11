@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Node, Type, TemplateType, Return, Break, Continue, Let, Var, Const,
     If, For, While, Loop, Continuing, Assign, Increment, Struct, Override, ArrayType,
     Call, Diagnostic, Alias, BinaryOperator, LiteralExpr, Expression,

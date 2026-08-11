@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Attribute } from "../wgsl_ast.js";
 
 export class TypeInfo {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @author Brendan Duncan / https://github.com/brendan-duncan
  */

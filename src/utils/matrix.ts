@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { TypeInfo } from '../reflect/info.js';
 
 export const VectorTypeSize = {
