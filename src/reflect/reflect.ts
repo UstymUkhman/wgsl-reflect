@@ -1,15 +1,15 @@
 /**
  * @author Brendan Duncan / https://github.com/brendan-duncan
  */
-import { TokenTypes } from "../wgsl_scanner.js";
-import { Type, Struct, Alias, Override, Var, Node, Function, VariableExpr, CreateExpr,
-    Let, CallExpr, Call, Argument, Member, Attribute, ArrayType, SamplerType, TemplateType, 
+// import { TokenTypes } from "../wgsl_scanner.js";
+import { Type, Struct, Alias, /* Override, */ Var, Node, Function, /* VariableExpr, CreateExpr,
+    Let, CallExpr, Call, */ Argument, Member, Attribute, ArrayType, SamplerType, TemplateType, 
     PointerType } from "../wgsl_ast.js";
-import { _BlockStart, _BlockEnd } from "../wgsl_ast.js";
-import { FunctionInfo, VariableInfo, AliasInfo, OverrideInfo, PointerInfo,
-  StructInfo, TypeInfo, MemberInfo, ArrayInfo, TemplateInfo, OutputInfo,
-  InputInfo, ArgumentInfo, ResourceType, EntryFunctions } from "./info.js";
-import { isArray } from "../utils/cast.js";
+// import { _BlockStart, _BlockEnd } from "../wgsl_ast.js";
+import { FunctionInfo, VariableInfo, AliasInfo, /* OverrideInfo, */ PointerInfo,
+  StructInfo, TypeInfo, MemberInfo, ArrayInfo, TemplateInfo, /* OutputInfo, */
+  InputInfo, /* ArgumentInfo, */ ResourceType, EntryFunctions } from "./info.js";
+// import { isArray } from "../utils/cast.js";
  
 class _FunctionResources {
   node: Function;
@@ -37,15 +37,15 @@ export class Reflect {
   /// All top-level storage vars in the shader.
   storage: VariableInfo[] = [];
   /// All top-level immediate buffer vars in the shader.
-  immediates: VariableInfo[] = [];
+  // immediates: VariableInfo[] = [];
   /// All top-level texture vars in the shader;
-  textures: VariableInfo[] = [];
+  // textures: VariableInfo[] = [];
   // All top-level sampler vars in the shader.
-  samplers: VariableInfo[] = [];
+  // samplers: VariableInfo[] = [];
   /// All top-level type aliases in the shader.
   aliases: AliasInfo[] = [];
   /// All top-level overrides in the shader.
-  overrides: OverrideInfo[] = [];
+  // overrides: OverrideInfo[] = [];
   /// All top-level structs in the shader.
   structs: StructInfo[] = [];
   /// All entry functions in the shader: vertex, fragment, and/or compute.
@@ -87,13 +87,13 @@ export class Reflect {
         continue;
       }
 
-      if (node instanceof Override) {
+      /* if (node instanceof Override) {
         const v = node as Override;
         const id = this._getAttributeNum(v.attributes, "id", 0);
         const type = v.type != null ? this.getTypeInfo(v.type, v.attributes) : null;
         this.overrides.push(new OverrideInfo(v.name, type, v.attributes, id));
         continue;
-      }
+      } */
 
       if (this._isUniformVar(node)) {
         const v = node as Var;
@@ -108,7 +108,7 @@ export class Reflect {
         continue;
       }
 
-      if (this._isImmediateVar(node)) {
+      /* if (this._isImmediateVar(node)) {
         const v = node as Var;
         const g = this._getAttributeNum(v.attributes, "group", 0);
         const b = this._getAttributeNum(v.attributes, "binding", 0);
@@ -119,7 +119,7 @@ export class Reflect {
         }
         this.immediates.push(varInfo);
         continue;
-      }
+      } */
 
       if (this._isStorageVar(node)) {
         const v = node as Var;
@@ -135,7 +135,7 @@ export class Reflect {
         continue;
       }
 
-      if (this._isTextureVar(node)) {
+      /* if (this._isTextureVar(node)) {
         const v = node as Var;
         const g = this._getAttributeNum(v.attributes, "group", 0);
         const b = this._getAttributeNum(v.attributes, "binding", 0);
@@ -153,9 +153,9 @@ export class Reflect {
           this.textures.push(varInfo);
         }
         continue;
-      }
+      } */
 
-      if (this._isSamplerVar(node)) {
+      /* if (this._isSamplerVar(node)) {
         const v = node as Var;
         const g = this._getAttributeNum(v.attributes, "group", 0);
         const b = this._getAttributeNum(v.attributes, "binding", 0);
@@ -163,15 +163,15 @@ export class Reflect {
         const varInfo = new VariableInfo(v.name, type, g, b, v.attributes, ResourceType.Sampler, v.access);
         this.samplers.push(varInfo);
         continue;
-      }
+      } */
     }
 
     for (const node of ast) {
       if (node instanceof Function) {
         const vertexStage = this._getAttribute(node, "vertex");
-        const fragmentStage = this._getAttribute(node, "fragment");
-        const computeStage = this._getAttribute(node, "compute");
-        const stage = vertexStage || fragmentStage || computeStage;
+        // const fragmentStage = this._getAttribute(node, "fragment");
+        // const computeStage = this._getAttribute(node, "compute");
+        const stage = vertexStage /* || fragmentStage || computeStage */;
 
         const fn = new FunctionInfo(node.name, stage?.name, node.attributes);
         fn.attributes = node.attributes;
@@ -184,29 +184,29 @@ export class Reflect {
           this._functions.get(node.name)!.inUse = true;
           fn.inUse = true;
           fn.inputs = this._getInputs(node.args);
-          fn.outputs = this._getOutputs(node.returnType);
+          // fn.outputs = this._getOutputs(node.returnType);
           this.entry[stage.name].push(fn);
         }
-        fn.resources = this._findResources(node, !!stage);
+        /* fn.resources = this._findResources(node, !!stage);
 
         fn.arguments = node.args.map(
           (arg) => new ArgumentInfo(arg.name, this.getTypeInfo(arg.type, arg.attributes), arg.attributes)
         );
 
-        fn.returnType = node.returnType ? this.getTypeInfo(node.returnType, node.attributes) : null;
+        fn.returnType = node.returnType ? this.getTypeInfo(node.returnType, node.attributes) : null; */
 
         continue;
       }
     }
 
-    for (const fn of this._functions.values()) {
+    /* for (const fn of this._functions.values()) {
       if (fn.info) {
         fn.info.inUse = fn.inUse;
         this._addCalls(fn.node, fn.info.calls);
       }
-    }
+    } */
 
-    for (const fn of this._functions.values()) {
+    /* for (const fn of this._functions.values()) {
       fn.node.search((node) => {
         if (node instanceof Attribute) {
           if (node.value) {
@@ -234,7 +234,7 @@ export class Reflect {
           }
         }
       });
-    }
+    } */
 
     for (const u of this.uniforms) {
       this._markStructsInUse(u.type);
@@ -244,32 +244,32 @@ export class Reflect {
     }
   }
 
-  getFunctionInfo(name: string): FunctionInfo | null {
+  /* getFunctionInfo(name: string): FunctionInfo | null {
     for (const fn of this.functions) {
       if (fn.name == name) {
         return fn;
       }
     }
     return null;
-  }
+  } */
 
-  getStructInfo(name: string): StructInfo | null {
+  /* getStructInfo(name: string): StructInfo | null {
     for (const s of this.structs) {
       if (s.name == name) {
         return s;
       }
     }
     return null;
-  }
+  } */
 
-  getOverrideInfo(name: string): OverrideInfo | null {
+  /* getOverrideInfo(name: string): OverrideInfo | null {
     for (const o of this.overrides) {
       if (o.name == name) {
         return o;
       }
     }
     return null;
-  }
+  } */
 
   _markStructsInUse(type: TypeInfo) {
     if (!type) {
@@ -296,17 +296,17 @@ export class Reflect {
     }
   }
 
-  _addCalls(fn: Function, calls: Set<FunctionInfo>, ) {
+  /* _addCalls(fn: Function, calls: Set<FunctionInfo>, ) {
     for (const call of fn.calls) {
       const info = this._functions.get(call.name)?.info;
       if (info) {
         calls.add(info);
       }
     }
-  }
+  } */
 
   /// Find a resource by its group and binding.
-  findResource(group: number, binding: number, entry?: string) {
+  /* findResource(group: number, binding: number, entry?: string) {
     if (entry) {
       for (const fn of this.entry.compute) {
         if (fn.name === entry) {
@@ -360,7 +360,7 @@ export class Reflect {
       }
     }
     return null;
-  }
+  } */
 
   _findResource(name: string): VariableInfo | null {
     for (const u of this.uniforms) {
@@ -373,7 +373,7 @@ export class Reflect {
         return s;
       }
     }
-    for (const t of this.textures) {
+    /* for (const t of this.textures) {
       if (t.name == name) {
         return t;
       }
@@ -382,7 +382,7 @@ export class Reflect {
       if (s.name == name) {
         return s;
       }
-    }
+    } */
     return null;
   }
   
@@ -391,7 +391,7 @@ export class Reflect {
     this._markStructsInUse(info);
   }
 
-  _findResources(fn: Node, isEntry: boolean): VariableInfo[] {
+  /* _findResources(fn: Node, isEntry: boolean): VariableInfo[] {
     const resources: any[] = [];
     const self = this;
     const varStack: any[] = [];
@@ -494,9 +494,9 @@ export class Reflect {
       }
     });
     return [...new Map(resources.map(r => [r.name, r])).values()];
-  }
+  } */
 
-  getBindGroups(): Array<VariableInfo[]> {
+  /* getBindGroups(): Array<VariableInfo[]> {
     const groups: Array<VariableInfo[]> = [];
 
     function _makeRoom(group: number, binding: number) {
@@ -538,9 +538,9 @@ export class Reflect {
     }
 
     return groups;
-  }
+  } */
 
-  _getOutputs(
+  /* _getOutputs(
     type: Type,
     outputs: OutputInfo[] | undefined = undefined
   ): OutputInfo[] {
@@ -558,9 +558,9 @@ export class Reflect {
     }
 
     return outputs;
-  }
+  } */
 
-  _getStructOutputs(struct: Struct, outputs: OutputInfo[]) {
+  /* _getStructOutputs(struct: Struct, outputs: OutputInfo[]) {
     for (const m of struct.members) {
       if (m.type instanceof Struct) {
         this._getStructOutputs(m.type, outputs);
@@ -580,9 +580,9 @@ export class Reflect {
         }
       }
     }
-  }
+  } */
 
-  _getOutputInfo(type: Type): OutputInfo | null {
+  /* _getOutputInfo(type: Type): OutputInfo | null {
     const location =
       this._getAttribute(type, "location") ||
       this._getAttribute(type, "builtin");
@@ -593,7 +593,7 @@ export class Reflect {
       return info;
     }
     return null;
-  }
+  } */
 
   _getInputs(
     args: Argument[],
@@ -794,7 +794,7 @@ export class Reflect {
         continue;
       }
 
-      const type = this._getAlias(member.type.name) ?? member.type;
+      // const type = this._getAlias(member.type.name) ?? member.type;
       const align = sizeInfo.align;
       const size = sizeInfo.size;
       offset = this._roundUp(align, offset + lastSize);
@@ -928,29 +928,29 @@ export class Reflect {
     return node instanceof Var && node.storage == "uniform";
   }
 
-  _isImmediateVar(node: Node): boolean {
+  /* _isImmediateVar(node: Node): boolean {
     return node instanceof Var && node.storage == "immediate";
-  }
+  } */
 
   _isStorageVar(node: Node): boolean {
     return node instanceof Var && node.storage == "storage";
   }
 
-  _isTextureVar(node: Node): boolean {
+  /* _isTextureVar(node: Node): boolean {
     return (
       node instanceof Var &&
       node.type !== null &&
       Reflect._textureTypes.indexOf(node.type.name) != -1
     );
-  }
+  } */
 
-  _isSamplerVar(node: Node): boolean {
+  /* _isSamplerVar(node: Node): boolean {
     return (
       node instanceof Var &&
       node.type !== null &&
       Reflect._samplerTypes.indexOf(node.type.name) != -1
     );
-  }
+  } */
 
   _getAttribute(node: Node, name: string): Attribute | null {
     const obj = node as Object;
@@ -1031,13 +1031,13 @@ export class Reflect {
     mat4x4: { align: 16, size: 64 },
   };
 
-  static readonly _textureTypes = TokenTypes.any_texture_type.map((t) => {
+  /* static readonly _textureTypes = TokenTypes.any_texture_type.map((t) => {
     return t.name;
   });
 
   static readonly _samplerTypes = TokenTypes.sampler_type.map((t) => {
     return t.name;
-  });
+  }); */
 }
 
 

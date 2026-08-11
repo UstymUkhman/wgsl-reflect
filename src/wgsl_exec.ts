@@ -3,7 +3,7 @@ import { Node, Type, TemplateType, Return, Break, Continue, Let, Var, Const,
     Call, Diagnostic, Alias, BinaryOperator, LiteralExpr, Expression,
     VariableExpr, CallExpr, CreateExpr, ConstExpr, BitcastExpr, UnaryOperator,
     ArrayIndex, StringExpr, Function, Switch, SwitchCase, Case, Default, DefaultSelector } from "./wgsl_ast.js";
-import { Data, TypedData, TextureData, ScalarData, VectorData, MatrixData, PointerData, VoidData, ControlData } from "./wgsl_ast.js";
+import { Data, TypedData, /* TextureData, */ ScalarData, VectorData, MatrixData, PointerData, VoidData, ControlData } from "./wgsl_ast.js";
 import { Reflect } from "./reflect/reflect.js";
 import { TypeInfo, StructInfo, ArrayInfo, TemplateInfo } from "./reflect/info.js";
 import { ExecContext, FunctionRef } from "./exec/exec_context.js";
@@ -115,16 +115,16 @@ export class WgslExec extends ExecInterface {
         return null;
     }
 
-    execute(config?: Object): void {
+    /* execute(config?: Object): void {
         config = config ?? {};
         if (config["constants"]) {
             this._setOverrides(config["constants"], this.context);
         }
 
         this._execStatements(this.ast, this.context);
-    }
+    } */
 
-    dispatchWorkgroups(kernel: string, dispatchCount: number | number[], bindGroups: Object, config?: Object): void {
+    /* dispatchWorkgroups(kernel: string, dispatchCount: number | number[], bindGroups: Object, config?: Object): void {
         const context = this.context.clone();
 
         config = config ?? {};
@@ -223,7 +223,7 @@ export class WgslExec extends ExecInterface {
                 }
             }
         }
-    }
+    } */
 
     static readonly _breakObj = new ControlData(new TypeInfo("BREAK", null), null);
     static readonly _continueObj = new ControlData(new TypeInfo("CONTINUE", null), null);
@@ -325,7 +325,7 @@ export class WgslExec extends ExecInterface {
         return t;
     }
 
-    _setOverrides(constants: Object, context: ExecContext): void {
+    /* _setOverrides(constants: Object, context: ExecContext): void {
         for (const k in constants) {
             const v = constants[k];
             const override = this.reflection.getOverrideInfo(k);
@@ -344,9 +344,9 @@ export class WgslExec extends ExecInterface {
                 console.error(`Override ${k} does not exist in the shader.`);
             }
         }
-    }
+    } */
 
-    _dispatchWorkgroup(f: FunctionRef, workgroup_id: number[], context: ExecContext): void {
+    /* _dispatchWorkgroup(f: FunctionRef, workgroup_id: number[], context: ExecContext): void {
         const workgroupSize = [1, 1, 1];
         for (const attr of f.node.attributes) {
             if (attr.name === "workgroup_size") {
@@ -411,9 +411,9 @@ export class WgslExec extends ExecInterface {
                 }
             }
         }
-    }
+    } */
 
-    _dispatchExec(f: FunctionRef, context: ExecContext): void {
+    /* _dispatchExec(f: FunctionRef, context: ExecContext): void {
         // Update any built-in input args.
         // TODO: handle input structs.
         for (const arg of f.node.args) {
@@ -429,7 +429,7 @@ export class WgslExec extends ExecInterface {
         }
 
         this._execStatements(f.node.body, context);
-    }
+    } */
 
     getVariableName(node: Node, context: ExecContext): string | null {
         while (node instanceof UnaryOperator) {

@@ -1,7 +1,7 @@
 import { WgslParser } from "./wgsl_parser.js";
 import { Reflect } from "./reflect/reflect.js";
 
-export * from "./reflect/info.js";
+// export * from "./reflect/info.js";
 
 export class WgslReflect extends Reflect {
   constructor(code?: string) {
