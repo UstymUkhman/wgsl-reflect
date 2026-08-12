@@ -1,8 +1,8 @@
 /**
  * @author Brendan Duncan / https://github.com/brendan-duncan
  */
-import { Type, Struct, Alias, Node, Function, /* VariableExpr, CreateExpr,
-    Let, CallExpr, Call, */ Argument, Member, Attribute } from "../wgsl_ast.js";
+import { Type, Struct, Alias, type Node, Function, /* VariableExpr, CreateExpr,
+    Let, CallExpr, Call, */ type Argument, type Member, type Attribute } from "../wgsl_ast.js";
 import { FunctionInfo, VariableInfo, AliasInfo, StructInfo, TypeInfo, MemberInfo, /* OutputInfo, */ InputInfo, EntryFunctions } from "./info.js";
 declare class _FunctionResources {
     node: Function;

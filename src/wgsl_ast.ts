@@ -3165,7 +3165,7 @@ export class TypedData extends Data {
 // honor the compare function, filter modes, and address modes. All fields are
 // optional; sampling falls back to linear filtering + clamp-to-edge, and the
 // compare function defaults to "less-equal" (typical for shadow maps).
-/* export class SamplerData extends Data {
+export class SamplerData extends Data {
   descriptor: Record<string, unknown>;
 
   constructor(descriptor: Record<string, unknown>, typeInfo: TypeInfo) {
@@ -3187,9 +3187,9 @@ export class TypedData extends Data {
 
     return this;
   }
-} */
+}
 
-/* export class TextureData extends Data {
+export class TextureData extends Data {
   data: Array<ArrayBuffer | Float32Array | Uint32Array | Int32Array | Uint8Array | Int8Array>;
   descriptor: Object;
   view: Object | null;
@@ -3351,4 +3351,4 @@ export class TypedData extends Data {
     const imageData = new Uint8Array(buffer);
     setTexturePixel(imageData, x, y, z, mipLevel, height, bytesPerRow, texelByteSize, this.format, value);
   }
-} */
+}

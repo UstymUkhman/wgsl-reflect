@@ -1,5 +1,5 @@
 import { Node, Type, Let, Var, Const, If, For, While, Loop, Assign, Increment, Override, Call, BinaryOperator, LiteralExpr, VariableExpr, CallExpr, CreateExpr, ConstExpr, BitcastExpr, UnaryOperator, Function, Switch } from "./wgsl_ast.js";
-import { Data, ControlData } from "./wgsl_ast.js";
+import { type Data, ControlData } from "./wgsl_ast.js";
 import { Reflect } from "./reflect/reflect.js";
 import { TypeInfo } from "./reflect/info.js";
 import { ExecContext } from "./exec/exec_context.js";
@@ -16,7 +16,6 @@ export declare class WgslExec extends ExecInterface {
     builtins: BuiltinFunctions;
     typeInfo: Record<string, TypeInfo>;
     constructor(ast?: Node[], context?: ExecContext);
-    getVariableValue(name: string): number | number[] | null;
     static readonly _breakObj: ControlData;
     static readonly _continueObj: ControlData;
     execStatement(stmt: Node, context: ExecContext): Data | null;

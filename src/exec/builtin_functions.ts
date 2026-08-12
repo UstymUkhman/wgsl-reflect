@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { CallExpr, Call, UnaryOperator, VariableExpr } from "../wgsl_ast.js";
-import { Data, TypedData, TextureData, SamplerData, ScalarData, VectorData, MatrixData } from "../wgsl_ast.js";
-import { ExecContext } from "./exec_context.js";
-import { ExecInterface } from "./exec_interface.js";
-import { ArrayInfo, TemplateInfo, TypeInfo } from "../reflect/info.js";
+import { type CallExpr, type Call, UnaryOperator, VariableExpr } from "../wgsl_ast.js";
+import { type Data, TypedData, TextureData, SamplerData, ScalarData, VectorData, MatrixData } from "../wgsl_ast.js";
+import type { ExecContext } from "./exec_context.js";
+import type { ExecInterface } from "./exec_interface.js";
+import type { ArrayInfo, TemplateInfo, TypeInfo } from "../reflect/info.js";
 
 // Map a cube-map direction to the face it hits and the 2d coordinate within
 // that face, using WebGPU's cube face order:

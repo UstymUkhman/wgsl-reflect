@@ -1,7 +1,7 @@
-import { WgslExec } from "./wgsl_exec.js";
+import type { WgslExec } from "./wgsl_exec.js";
 import { TypeInfo } from "./reflect/info.js";
-import { ExecContext } from "./exec/exec_context.js";
-import { ExecInterface } from "./exec/exec_interface.js";
+import type { ExecContext } from "./exec/exec_context.js";
+import type { ExecInterface } from "./exec/exec_interface.js";
 /**
  * @class Node
  * @category AST

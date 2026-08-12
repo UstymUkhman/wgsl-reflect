@@ -1,8 +1,8 @@
-import { CallExpr, Call } from "../wgsl_ast.js";
-import { Data, TextureData, SamplerData } from "../wgsl_ast.js";
-import { ExecContext } from "./exec_context.js";
-import { ExecInterface } from "./exec_interface.js";
-import { TypeInfo } from "../reflect/info.js";
+import { type CallExpr, type Call } from "../wgsl_ast.js";
+import { type Data, TextureData, SamplerData } from "../wgsl_ast.js";
+import type { ExecContext } from "./exec_context.js";
+import type { ExecInterface } from "./exec_interface.js";
+import type { TypeInfo } from "../reflect/info.js";
 export declare function cubeFaceUV(x: number, y: number, z: number): {
     face: number;
     u: number;
