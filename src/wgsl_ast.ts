@@ -1,8 +1,7 @@
-// @ts-nocheck
-import { WgslExec } from "./wgsl_exec.js";
+import type { WgslExec } from "./wgsl_exec.js";
 import { TypeInfo, PointerInfo, TemplateInfo, ArrayInfo, StructInfo } from "./reflect/info.js";
-import { ExecContext } from "./exec/exec_context.js";
-import { ExecInterface } from "./exec/exec_interface.js";
+import type { ExecContext } from "./exec/exec_context.js";
+import type { ExecInterface } from "./exec/exec_interface.js";
 import { setTexturePixel, getTexturePixel } from "./utils/texture_sample.js";
 import { TextureFormatInfo } from "./utils/texture_format_info.js";
 
@@ -3166,7 +3165,7 @@ export class TypedData extends Data {
 // honor the compare function, filter modes, and address modes. All fields are
 // optional; sampling falls back to linear filtering + clamp-to-edge, and the
 // compare function defaults to "less-equal" (typical for shadow maps).
-export class SamplerData extends Data {
+/* export class SamplerData extends Data {
   descriptor: Record<string, unknown>;
 
   constructor(descriptor: Record<string, unknown>, typeInfo: TypeInfo) {
@@ -3188,9 +3187,9 @@ export class SamplerData extends Data {
 
     return this;
   }
-}
+} */
 
-export class TextureData extends Data {
+/* export class TextureData extends Data {
   data: Array<ArrayBuffer | Float32Array | Uint32Array | Int32Array | Uint8Array | Int8Array>;
   descriptor: Object;
   view: Object | null;
@@ -3352,4 +3351,4 @@ export class TextureData extends Data {
     const imageData = new Uint8Array(buffer);
     setTexturePixel(imageData, x, y, z, mipLevel, height, bytesPerRow, texelByteSize, this.format, value);
   }
-}
+} */

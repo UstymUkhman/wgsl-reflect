@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Node, Type, TemplateType, Return, Break, Continue, Let, Var, Const,
     If, For, While, Loop, Continuing, Assign, Increment, Struct, Override, ArrayType,
-    Call, Diagnostic, Alias, BinaryOperator, LiteralExpr, Expression,
+    Call, Diagnostic, Alias, BinaryOperator, LiteralExpr, type Expression,
     VariableExpr, CallExpr, CreateExpr, ConstExpr, BitcastExpr, UnaryOperator,
-    ArrayIndex, StringExpr, Function, Switch, SwitchCase, Case, Default, DefaultSelector } from "./wgsl_ast.js";
-import { Data, TypedData, /* TextureData, */ ScalarData, VectorData, MatrixData, PointerData, VoidData, ControlData } from "./wgsl_ast.js";
+    ArrayIndex, StringExpr, Function, Switch, type SwitchCase, Case, Default, DefaultSelector } from "./wgsl_ast.js";
+import { type Data, TypedData, /* TextureData, */ ScalarData, VectorData, MatrixData, PointerData, VoidData, ControlData } from "./wgsl_ast.js";
 import { Reflect } from "./reflect/reflect.js";
 import { TypeInfo, StructInfo, ArrayInfo, TemplateInfo } from "./reflect/info.js";
 import { ExecContext, FunctionRef } from "./exec/exec_context.js";
@@ -86,7 +86,7 @@ export class WgslExec extends ExecInterface {
         };
     }
 
-    getVariableValue(name: string): number | number[] | null {
+    /* getVariableValue(name: string): number | number[] | null {
         const v = this.context.getVariable(name)?.value ?? null;
         if (v === null) {
             return null;
@@ -114,7 +114,7 @@ export class WgslExec extends ExecInterface {
         }
         console.error(`Unsupported return variable type ${v.typeInfo.name}`);
         return null;
-    }
+    } */
 
     /* execute(config?: Object): void {
         config = config ?? {};

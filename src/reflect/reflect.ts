@@ -3,8 +3,8 @@
  * @author Brendan Duncan / https://github.com/brendan-duncan
  */
 // import { TokenTypes } from "../wgsl_scanner.js";
-import { Type, Struct, Alias, /* Override, */ Var, Node, Function, /* VariableExpr, CreateExpr,
-    Let, CallExpr, Call, */ Argument, Member, Attribute, ArrayType, SamplerType, TemplateType, 
+import { Type, Struct, Alias, /* Override, */ Var, type Node, Function, /* VariableExpr, CreateExpr,
+    Let, CallExpr, Call, */ type Argument, type Member, type Attribute, ArrayType, SamplerType, TemplateType, 
     PointerType } from "../wgsl_ast.js";
 // import { _BlockStart, _BlockEnd } from "../wgsl_ast.js";
 import { FunctionInfo, VariableInfo, AliasInfo, /* OverrideInfo, */ PointerInfo,

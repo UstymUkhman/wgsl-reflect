@@ -1,4 +1,4 @@
-import { WgslScanner, Token, TokenType, TokenTypes } from "./wgsl_scanner.js";
+import { WgslScanner, type Token, TokenType, TokenTypes } from "./wgsl_scanner.js";
 import * as AST from "./wgsl_ast.js";
 import { WgslExec } from "./wgsl_exec.js";
 import { TemplateInfo } from "./reflect/info.js";
