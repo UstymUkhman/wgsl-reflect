@@ -3316,6 +3316,13 @@ export class TextureData extends Data {
     return formatInfo.isDepthStencil;
   }
 
+  get swizzle(): string {
+    if (this.view) {
+      return this.view["swizzle"] ?? "rgba";
+    }
+    return "rgba";
+  }
+
   getGpuSize(): number {
     const format = this.format;
     const formatInfo = TextureFormatInfo[format];
@@ -3334,13 +3341,28 @@ export class TextureData extends Data {
     return blockWidth * blockHeight * bytesPerBlock * depthOrArrayLayers;
   }
 
+  applySwizzle(raw: number[] | null) : number[] | null{
+    if (raw == null) return null;
+
+    const rgba = [raw[0] ?? 0, raw[1] ?? 0, raw[2] ?? 0, raw[3] ?? 1];
+    const sw = this.swizzle.toLowerCase();
+    if (sw === "rgba") {
+      return rgba;
+    }
+    const map: Record<string, number> = {
+      'r': rgba[0], 'g': rgba[1], 'b': rgba[2], 'a': rgba[3], '0': 0, '1': 1
+    };
+    return [map[sw[0]] ?? rgba[0], map[sw[1]] ?? rgba[1], map[sw[2]] ?? rgba[2], map[sw[3]] ?? rgba[3]];
+  }
+
   getPixel(x: number, y: number, z: number = 0, mipLevel: number = 0): number[] | null {
     const texelByteSize = this.texelByteSize;
     const bytesPerRow = this.bytesPerRow;
     const height = this.height;
     const buffer = this.data[mipLevel];
     const imageData = new Uint8Array(buffer);
-    return getTexturePixel(imageData, x, y, z, mipLevel, height, bytesPerRow, texelByteSize, this.format);
+    const raw = getTexturePixel(imageData, x, y, z, mipLevel, height, bytesPerRow, texelByteSize, this.format);
+    return this.applySwizzle(raw);
   }
 
   setPixel(x: number, y: number, z: number, mipLevel: number, value: number[]): void {

@@ -835,7 +835,9 @@ export declare class TextureData extends Data {
     get texelByteSize(): number;
     get bytesPerRow(): number;
     get isDepthStencil(): boolean;
+    get swizzle(): string;
     getGpuSize(): number;
+    applySwizzle(raw: number[] | null): number[] | null;
     getPixel(x: number, y: number, z?: number, mipLevel?: number): number[] | null;
     setPixel(x: number, y: number, z: number, mipLevel: number, value: number[]): void;
 }
