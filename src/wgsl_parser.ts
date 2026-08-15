@@ -389,7 +389,7 @@ export class WgslParser {
         const typeAttrs = this._attribute();
         const type = this._type_decl();
         if (type != null) {
-          type.attributes = typeAttrs;
+          this._setTypeAttributes(type, typeAttrs);
 
           args.push(this._updateNode(new AST.Argument(name, type, argAttrs)));
         }
@@ -405,9 +405,7 @@ export class WgslParser {
     if (this._match(TokenTypes.tokens.arrow)) {
       const attrs = this._attribute();
       _return = this._type_decl();
-      if (_return != null) {
-        _return.attributes = attrs;
-      }
+      this._setTypeAttributes(_return, attrs);
     }
 
     const body = this._compound_statement();
@@ -689,9 +687,7 @@ export class WgslParser {
       if (this._match(TokenTypes.tokens.colon)) {
         const typeAttrs = this._attribute();
         type = this._type_decl();
-        if (type != null) {
-          type.attributes = typeAttrs;
-        }
+        this._setTypeAttributes(type, typeAttrs);
       }
       this._consume(TokenTypes.tokens.equal, "Expected '=' for let.");
       const value = this._short_circuit_or_expression();
@@ -708,9 +704,7 @@ export class WgslParser {
       if (this._match(TokenTypes.tokens.colon)) {
         const typeAttrs = this._attribute();
         type = this._type_decl();
-        if (type != null) {
-          type.attributes = typeAttrs;
-        }
+        this._setTypeAttributes(type, typeAttrs);
       }
       this._consume(TokenTypes.tokens.equal, "Expected '=' for const.");
       const value = this._short_circuit_or_expression();
@@ -1546,9 +1540,7 @@ export class WgslParser {
 
       const typeAttrs = this._attribute();
       const memberType = this._type_decl();
-      if (memberType != null) {
-        memberType.attributes = typeAttrs;
-      }
+      this._setTypeAttributes(memberType, typeAttrs);
 
       if (!this._check(TokenTypes.tokens.brace_right)) {
         this._consume(TokenTypes.tokens.comma, "Expected ',' for struct member.");
@@ -1628,9 +1620,7 @@ export class WgslParser {
     if (this._match(TokenTypes.tokens.colon)) {
       const attrs = this._attribute();
       type = this._type_decl();
-      if (type != null) {
-        type.attributes = attrs;
-      }
+      this._setTypeAttributes(type, attrs);
     }
     let value: AST.Expression | null = null;
 
@@ -1709,9 +1699,7 @@ export class WgslParser {
     if (this._match(TokenTypes.tokens.colon)) {
       const attrs = this._attribute();
       type = this._type_decl();
-      if (type != null) {
-        type.attributes = attrs;
-      }
+      this._setTypeAttributes(type, attrs);
     }
 
     let value: AST.Expression | null = null;
@@ -1774,9 +1762,7 @@ export class WgslParser {
     if (this._match(TokenTypes.tokens.colon)) {
       const attrs = this._attribute();
       type = this._type_decl();
-      if (type != null) {
-        type.attributes = attrs;
-      }
+      this._setTypeAttributes(type, attrs);
     }
 
     return this._updateNode(new AST.Var(name.toString(), type, storage, access, null), line);
@@ -1793,9 +1779,7 @@ export class WgslParser {
     if (this._match(TokenTypes.tokens.colon)) {
       const attrs = this._attribute();
       type = this._type_decl();
-      if (type != null) {
-        type.attributes = attrs;
-      }
+      this._setTypeAttributes(type, attrs);
     }
 
     return this._updateNode(new AST.Override(name.toString(), type, null));
@@ -2028,6 +2012,13 @@ export class WgslParser {
     }
 
     return null;
+  }
+
+  _setTypeAttributes(type: AST.Type | null, attributes: AST.Attribute[] | null): void {
+    if (type === null || attributes === null || type.isStruct) {
+      return;
+    }
+    type.attributes = attributes;
   }
 
   _attribute(): AST.Attribute[] | null {

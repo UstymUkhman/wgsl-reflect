@@ -172,6 +172,8 @@ class TypeInfo {
   name: string;
   // Size of the data used by this type, in bytes
   size: number;
+  // Attributes assigned to this declaration.
+  attributes: Attribute[] | null;
 
   // True if this is an array type, can be cast to ArrayInfo.
   get isArray(): boolean;

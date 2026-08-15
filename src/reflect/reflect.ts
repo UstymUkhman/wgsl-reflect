@@ -715,7 +715,9 @@ export class Reflect {
 
     if (type instanceof Struct) {
       const s = type as Struct;
-      const info = new StructInfo(s.name, attributes);
+      // A struct declaration can have its own attributes, which take precedence
+      // over the attributes of whatever is referencing the struct type.
+      const info = new StructInfo(s.name, s.attributes ?? attributes);
       info.startLine = s.startLine;
       info.endLine = s.endLine;
       for (const m of s.members) {

@@ -132,6 +132,35 @@ export async function run() {
         test.equals(t.uniforms[0].type.size, 72);
     });
 
+    await test("struct attributes", async function (test) {
+      const t = new WgslReflect(`
+        @myAttribute(123)
+        fn foo() {}
+
+        @myAttribute(456)
+        struct Bar {
+            a: i32
+        }
+
+        struct NoAttributes {
+            b: f32
+        }
+
+        @group(0) @binding(0) var<uniform> uni: Bar;`);
+      test.equals(t.functions[0].attributes.length, 1);
+      test.equals(t.functions[0].attributes[0].name, "myAttribute");
+      test.equals(t.functions[0].attributes[0].value, "123");
+      test.equals(t.structs.length, 2);
+      test.equals(t.structs[0].name, "Bar");
+      test.equals(t.structs[0].attributes.length, 1);
+      test.equals(t.structs[0].attributes[0].name, "myAttribute");
+      test.equals(t.structs[0].attributes[0].value, "456");
+      // A struct used as a variable type should keep its own attributes.
+      test.equals(t.uniforms[0].type.attributes[0].name, "myAttribute");
+      test.equals(t.structs[1].name, "NoAttributes");
+      test.equals(t.structs[1].attributes, null);
+    });
+
     await test("texture_depth_multisampled_2d", function (test) {
       const t = new WgslReflect(`
           @group(0) @binding(0) var msaaDepth: texture_2d<f32>;
