@@ -79,6 +79,15 @@ export class Reflect {
   }
 
   updateAST(ast: Node[]): void {
+    // Module-scope const and override values are recorded first, because
+    // attribute arguments like @binding(N) or @align(N) can reference them and
+    // are read by the passes below.
+    for (const node of ast) {
+      if (node instanceof Const || node instanceof Override) {
+        this._recordConstValue(node.name, node.value);
+      }
+    }
+
     for (const node of ast) {
       if (node instanceof Function) {
         this._functions.set(node.name, new _FunctionResources(node as Function));
@@ -105,12 +114,6 @@ export class Reflect {
         const id = this._getAttributeNum(v.attributes, "id", 0);
         const type = v.type != null ? this.getTypeInfo(v.type, v.attributes) : null;
         this.overrides.push(new OverrideInfo(v.name, type, v.attributes, id));
-        this._recordConstValue(v.name, v.value);
-        continue;
-      }
-
-      if (node instanceof Const) {
-        this._recordConstValue(node.name, node.value);
         continue;
       }
 
@@ -679,7 +682,12 @@ export class Reflect {
       s = s[0];
     }
     const n = parseInt(s);
-    return isNaN(n) ? s : n;
+    if (!isNaN(n)) {
+      return n;
+    }
+    // Not a literal, so it's an identifier: either a module-scope const, or
+    // something that isn't a number at all, such as @builtin(position).
+    return this._constValues.get(s) ?? s;
   }
 
   _getAlias(name: string): TypeInfo | null {
@@ -1006,7 +1014,11 @@ export class Reflect {
           return v;
         }
         if (typeof v === "string") {
-          return parseInt(v);
+          const n = parseInt(v);
+          // An identifier rather than a literal: resolve it from the
+          // module-scope consts, falling back to the default if it can't be
+          // statically evaluated.
+          return isNaN(n) ? (this._constValues.get(v) ?? defaultValue) : n;
         }
         return defaultValue;
       }

@@ -191,6 +191,30 @@ export async function run() {
       test.equals(wgs("helper"), null);
     });
 
+    await test("const attribute values", async function (test) {
+      const t = new WgslReflect(`
+        const B = 3;
+        const LOC = 1;
+        const ALIGN = 32;
+        override ID = 7;
+        struct S {
+          @align(ALIGN) a: f32,
+          b: f32
+        }
+        @group(0) @binding(B) var<uniform> u: S;
+        @id(ID) override scale: f32 = 1.0;
+        @vertex fn vs(@location(LOC) pos: vec4f) -> @builtin(position) vec4f { return pos; }`);
+      test.equals(t.uniforms[0].binding, 3);
+      test.equals(t.overrides[1].name, "scale");
+      test.equals(t.overrides[1].id, 7);
+      test.equals(t.entry.vertex[0].inputs[0].location, 1);
+      // A non-numeric attribute value, like a builtin name, is still a string.
+      test.equals(t.entry.vertex[0].outputs[0].location, "position");
+      // @align from a const affects the struct layout.
+      test.equals(t.structs[0].members[1].offset, 4);
+      test.equals(t.structs[0].size, 32);
+    });
+
     await test("texture_depth_multisampled_2d", function (test) {
       const t = new WgslReflect(`
           @group(0) @binding(0) var msaaDepth: texture_2d<f32>;
