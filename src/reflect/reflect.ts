@@ -3,13 +3,14 @@
  */
 import { TokenTypes } from "../wgsl_scanner.js";
 import { Type, Struct, Alias, Override, Var, Node, Function, VariableExpr, CreateExpr,
-    Let, CallExpr, Call, Argument, Member, Attribute, ArrayType, SamplerType, TemplateType, 
-    PointerType } from "../wgsl_ast.js";
+    Let, Const, Expression, CallExpr, Call, Argument, Member, Attribute, ArrayType, SamplerType,
+    TemplateType, PointerType } from "../wgsl_ast.js";
 import { _BlockStart, _BlockEnd } from "../wgsl_ast.js";
 import { FunctionInfo, VariableInfo, AliasInfo, OverrideInfo, PointerInfo,
   StructInfo, TypeInfo, MemberInfo, ArrayInfo, TemplateInfo, OutputInfo,
   InputInfo, ArgumentInfo, ResourceType, EntryFunctions } from "./info.js";
 import { isArray } from "../utils/cast.js";
+import { constExprValue, workgroupSizeOf } from "../utils/const_expr.js";
  
 class _FunctionResources {
   node: Function;
@@ -55,6 +56,18 @@ export class Reflect {
 
   _types: Map<Type, TypeInfo> = new Map();
   _functions: Map<string, _FunctionResources> = new Map();
+  /// The values of module-scope consts and overrides that could be statically
+  /// evaluated, used to resolve things like @workgroup_size(SIZE).
+  _constValues: Map<string, number> = new Map();
+
+  /// Record the value of a module-scope const or override, if it can be
+  /// statically evaluated. An override with no default value is not recorded.
+  _recordConstValue(name: string, value: Expression | null): void {
+    const v = constExprValue(value, this._constValues);
+    if (v !== null) {
+      this._constValues.set(name, v);
+    }
+  }
 
   _isStorageTexture(type: TypeInfo): boolean {
     return (
@@ -92,6 +105,12 @@ export class Reflect {
         const id = this._getAttributeNum(v.attributes, "id", 0);
         const type = v.type != null ? this.getTypeInfo(v.type, v.attributes) : null;
         this.overrides.push(new OverrideInfo(v.name, type, v.attributes, id));
+        this._recordConstValue(v.name, v.value);
+        continue;
+      }
+
+      if (node instanceof Const) {
+        this._recordConstValue(node.name, node.value);
         continue;
       }
 
@@ -175,6 +194,7 @@ export class Reflect {
 
         const fn = new FunctionInfo(node.name, stage?.name, node.attributes);
         fn.attributes = node.attributes;
+        fn.workgroupSize = workgroupSizeOf(node, this._constValues);
         fn.startLine = node.startLine;
         fn.endLine = node.endLine;
         this.functions.push(fn);

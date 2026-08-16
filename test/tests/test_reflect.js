@@ -161,6 +161,36 @@ export async function run() {
       test.equals(t.structs[1].attributes, null);
     });
 
+    await test("workgroup size", async function (test) {
+      const t = new WgslReflect(`
+        const WG = 8;
+        const HALF = WG / 2;
+        override wgs: u32 = 16;
+        override noDefault: u32;
+        @compute @workgroup_size(8, 4, 2) fn main1() {}
+        @compute @workgroup_size(8) fn main2() {}
+        @compute @workgroup_size(WG, HALF) fn main3() {}
+        @compute @workgroup_size(wgs, 2) fn main4() {}
+        @compute @workgroup_size(noDefault) fn main5() {}
+        @vertex fn vs() -> @builtin(position) vec4f { return vec4f(0); }
+        fn helper() {}`);
+      const wgs = (name) => t.functions.find((f) => f.name === name).workgroupSize;
+      test.equals(wgs("main1"), [8, 4, 2]);
+      // Omitted dimensions default to 1.
+      test.equals(wgs("main2"), [8, 1, 1]);
+      // Module-scope consts are resolved.
+      test.equals(wgs("main3"), [8, 4, 1]);
+      // So are override default values.
+      test.equals(wgs("main4"), [16, 2, 1]);
+      // An override with no default is only known at pipeline creation, so it
+      // reports 1, and the function lists the override it depends on.
+      test.equals(wgs("main5"), [1, 1, 1]);
+      test.equals(t.functions.find((f) => f.name === "main5").overrides[0].name, "noDefault");
+      // Functions without a @workgroup_size have none.
+      test.equals(wgs("vs"), null);
+      test.equals(wgs("helper"), null);
+    });
+
     await test("texture_depth_multisampled_2d", function (test) {
       const t = new WgslReflect(`
           @group(0) @binding(0) var msaaDepth: texture_2d<f32>;
