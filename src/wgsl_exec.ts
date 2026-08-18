@@ -195,7 +195,7 @@ export class WgslExec extends ExecInterface {
                                 if (entry.texture !== undefined && entry.descriptor !== undefined) {
                                     // Texture
                                     const textureData = new TextureData(entry.texture, this.getTypeInfo(node.type), entry.descriptor,
-                                            entry.texture.view ?? null);
+                                            entry.view ?? null);
                                     v.value = textureData;
                                 } else if (entry.uniform !== undefined) {
                                     // Uniform buffer

@@ -367,6 +367,11 @@ export class FunctionInfo {
   resources: VariableInfo[] = [];
   overrides: OverrideInfo[] = [];
   attributes: Attribute[] | null;
+  /// The [x, y, z] of the @workgroup_size attribute, or null if the function
+  /// doesn't have one. Omitted dimensions are 1, as are dimensions given by an
+  /// override with no default value, whose size is only known at pipeline
+  /// creation; check `overrides` to see if the size depends on one.
+  workgroupSize: [number, number, number] | null = null;
   startLine: number = -1;
   endLine: number = -1;
   inUse: boolean = false;

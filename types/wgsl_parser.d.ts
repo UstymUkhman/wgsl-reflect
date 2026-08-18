@@ -84,5 +84,6 @@ export declare class WgslParser {
     _type_alias(): AST.Alias;
     _type_decl(): AST.Type | null;
     _texture_sampler_types(): AST.SamplerType | null;
+    _setTypeAttributes(type: AST.Type | null, attributes: AST.Attribute[] | null): void;
     _attribute(): AST.Attribute[] | null;
 }

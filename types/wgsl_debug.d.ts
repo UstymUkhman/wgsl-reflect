@@ -11,12 +11,11 @@ export declare const DERIVATIVE_BUILTINS: Set<string>;
 export declare const IMPLICIT_LOD_BUILTINS: Set<string>;
 export declare const QUAD_RENDEZVOUS_BUILTINS: Set<string>;
 interface BindingEntry {
-    texture?: {
-        view?: unknown;
-    };
+    texture?: unknown;
     descriptor?: unknown;
     uniform?: ArrayBuffer;
     sampler?: Record<string, unknown>;
+    view?: unknown;
 }
 type StageInputs = Record<string, number | number[] | Float32Array | Uint32Array | Int32Array>;
 export declare class WgslDebug {
