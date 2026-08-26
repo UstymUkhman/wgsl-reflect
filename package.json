@@ -31,6 +31,7 @@
     "test": "test"
   },
   "scripts": {
+    "minify": "bunx roadroller wgsl_reflect.module.js -O2 -o wgsl_reflect.module.min.js",
     "build": "rollup -c rollup.config.js",
     "watch": "npm run watch:js",
     "watch:js": "rollup -c rollup.config.js --watch",
