@@ -4,14 +4,14 @@
  */
 // import { TokenTypes } from "../wgsl_scanner.js";
 import { Type, Struct, Alias, /* Override, */ Var, type Node, Function, /* VariableExpr, CreateExpr,
-    Let, Const, */ type Expression, /* CallExpr, Call, */ type Argument, type Member, type Attribute, ArrayType, SamplerType, TemplateType, 
-    PointerType } from "../wgsl_ast.js";
+    Let, Const, type Expression, CallExpr, Call, */ type Argument, type Member, type Attribute, ArrayType, /* SamplerType, TemplateType, 
+    PointerType */ } from "../wgsl_ast.js";
 // import { _BlockStart, _BlockEnd } from "../wgsl_ast.js";
-import { FunctionInfo, VariableInfo, AliasInfo, /* OverrideInfo, */ PointerInfo,
+import { FunctionInfo, VariableInfo, AliasInfo, /* OverrideInfo, PointerInfo, */
   StructInfo, TypeInfo, MemberInfo, ArrayInfo, TemplateInfo, /* OutputInfo, */
   InputInfo, /* ArgumentInfo, */ ResourceType, EntryFunctions } from "./info.js";
 // import { isArray } from "../utils/cast.js";
-import { constExprValue /*, workgroupSizeOf */ } from "../utils/const_expr.js";
+// import { constExprValue, workgroupSizeOf } from "../utils/const_expr.js";
  
 class _FunctionResources {
   node: Function;
@@ -63,12 +63,12 @@ export class Reflect {
 
   /// Record the value of a module-scope const or override, if it can be
   /// statically evaluated. An override with no default value is not recorded.
-  _recordConstValue(name: string, value: Expression | null): void {
+  /* _recordConstValue(name: string, value: Expression | null): void {
     const v = constExprValue(value, this._constValues);
     if (v !== null) {
       this._constValues.set(name, v);
     }
-  }
+  } */
 
   _isStorageTexture(type: TypeInfo): boolean {
     return (
@@ -723,13 +723,13 @@ export class Reflect {
       return this._types.get(type)!;
     }
 
-    if (type instanceof PointerType) {
+    /* if (type instanceof PointerType) {
       const t = type.type ? this.getTypeInfo(type.type!, type.attributes) : null;
       const info = new PointerInfo(type.name, t, attributes);
       this._types.set(type, info);
       this._updateTypeInfo(info);
       return info;
-    }
+    } */
 
     if (type instanceof ArrayType) {
       const a = type as ArrayType;
@@ -758,7 +758,7 @@ export class Reflect {
       return info;
     }
 
-    if (type instanceof SamplerType) {
+    /* if (type instanceof SamplerType) {
       const s = type as SamplerType;
       const formatIsType = s.format instanceof Type;
       const format = s.format
@@ -779,7 +779,7 @@ export class Reflect {
       this._types.set(type, info);
       this._updateTypeInfo(info);
       return info;
-    }
+    } */
 
     const info = new TypeInfo(type.name, attributes);
     this._types.set(type, info);
@@ -802,9 +802,9 @@ export class Reflect {
       }
     }
 
-    if (type instanceof PointerInfo) {
+    /* if (type instanceof PointerInfo) {
       this._updateTypeInfo(type["format"]);
-    }
+    } */
 
     if (type instanceof StructInfo) {
       this._updateStructInfo(type);

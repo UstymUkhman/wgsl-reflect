@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Attribute } from "../wgsl_ast.js";
+import type { Attribute } from "../wgsl_ast.js";
 
 export class TypeInfo {
   name: string;
@@ -303,6 +303,7 @@ export class InputInfo {
   }
 }
 
+/*
 export class OutputInfo {
   name: string;
   type: TypeInfo | null;
@@ -356,6 +357,7 @@ export class ArgumentInfo {
     this.attributes = attributes;
   }
 }
+*/
 
 export class FunctionInfo {
   name: string;

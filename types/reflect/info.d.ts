@@ -1,4 +1,4 @@
-import { Attribute } from "../wgsl_ast.js";
+import type { Attribute } from "../wgsl_ast.js";
 export declare class TypeInfo {
     name: string;
     attributes: Attribute[] | null;
@@ -96,26 +96,6 @@ export declare class InputInfo {
     location: number | string;
     interpolation: string | null;
     constructor(name: string, type: TypeInfo | null, locationType: string, location: number | string);
-}
-export declare class OutputInfo {
-    name: string;
-    type: TypeInfo | null;
-    locationType: string;
-    location: number | string;
-    constructor(name: string, type: TypeInfo | null, locationType: string, location: number | string);
-}
-export declare class OverrideInfo {
-    name: string;
-    type: TypeInfo | null;
-    attributes: Attribute[] | null;
-    id: number;
-    constructor(name: string, type: TypeInfo | null, attributes: Attribute[] | null, id: number);
-}
-export declare class ArgumentInfo {
-    name: string;
-    type: TypeInfo;
-    attributes: Attribute[] | null;
-    constructor(name: string, type: TypeInfo, attributes: Attribute[] | null);
 }
 export declare class FunctionInfo {
     name: string;

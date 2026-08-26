@@ -2,8 +2,8 @@
  * @author Brendan Duncan / https://github.com/brendan-duncan
  */
 import { Type, Struct, Alias, type Node, Function, /* VariableExpr, CreateExpr,
-    Let, Const, */ type Expression, /* CallExpr, Call, */ type Argument, type Member, type Attribute } from "../wgsl_ast.js";
-import { FunctionInfo, VariableInfo, AliasInfo, StructInfo, TypeInfo, MemberInfo, /* OutputInfo, */ InputInfo, EntryFunctions } from "./info.js";
+    Let, Const, type Expression, CallExpr, Call, */ type Argument, type Member, type Attribute } from "../wgsl_ast.js";
+import { FunctionInfo, VariableInfo, AliasInfo, /* OverrideInfo, PointerInfo, */ StructInfo, TypeInfo, MemberInfo, /* OutputInfo, */ InputInfo, EntryFunctions } from "./info.js";
 declare class _FunctionResources {
     node: Function;
     resources: VariableInfo[] | null;
@@ -26,7 +26,6 @@ export declare class Reflect {
     _types: Map<Type, TypeInfo>;
     _functions: Map<string, _FunctionResources>;
     _constValues: Map<string, number>;
-    _recordConstValue(name: string, value: Expression | null): void;
     _isStorageTexture(type: TypeInfo): boolean;
     updateAST(ast: Node[]): void;
     _markStructsInUse(type: TypeInfo): void;
