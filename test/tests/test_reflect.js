@@ -132,6 +132,89 @@ export async function run() {
         test.equals(t.uniforms[0].type.size, 72);
     });
 
+    await test("struct attributes", async function (test) {
+      const t = new WgslReflect(`
+        @myAttribute(123)
+        fn foo() {}
+
+        @myAttribute(456)
+        struct Bar {
+            a: i32
+        }
+
+        struct NoAttributes {
+            b: f32
+        }
+
+        @group(0) @binding(0) var<uniform> uni: Bar;`);
+      test.equals(t.functions[0].attributes.length, 1);
+      test.equals(t.functions[0].attributes[0].name, "myAttribute");
+      test.equals(t.functions[0].attributes[0].value, "123");
+      test.equals(t.structs.length, 2);
+      test.equals(t.structs[0].name, "Bar");
+      test.equals(t.structs[0].attributes.length, 1);
+      test.equals(t.structs[0].attributes[0].name, "myAttribute");
+      test.equals(t.structs[0].attributes[0].value, "456");
+      // A struct used as a variable type should keep its own attributes.
+      test.equals(t.uniforms[0].type.attributes[0].name, "myAttribute");
+      test.equals(t.structs[1].name, "NoAttributes");
+      test.equals(t.structs[1].attributes, null);
+    });
+
+    await test("workgroup size", async function (test) {
+      const t = new WgslReflect(`
+        const WG = 8;
+        const HALF = WG / 2;
+        override wgs: u32 = 16;
+        override noDefault: u32;
+        @compute @workgroup_size(8, 4, 2) fn main1() {}
+        @compute @workgroup_size(8) fn main2() {}
+        @compute @workgroup_size(WG, HALF) fn main3() {}
+        @compute @workgroup_size(wgs, 2) fn main4() {}
+        @compute @workgroup_size(noDefault) fn main5() {}
+        @vertex fn vs() -> @builtin(position) vec4f { return vec4f(0); }
+        fn helper() {}`);
+      const wgs = (name) => t.functions.find((f) => f.name === name).workgroupSize;
+      test.equals(wgs("main1"), [8, 4, 2]);
+      // Omitted dimensions default to 1.
+      test.equals(wgs("main2"), [8, 1, 1]);
+      // Module-scope consts are resolved.
+      test.equals(wgs("main3"), [8, 4, 1]);
+      // So are override default values.
+      test.equals(wgs("main4"), [16, 2, 1]);
+      // An override with no default is only known at pipeline creation, so it
+      // reports 1, and the function lists the override it depends on.
+      test.equals(wgs("main5"), [1, 1, 1]);
+      test.equals(t.functions.find((f) => f.name === "main5").overrides[0].name, "noDefault");
+      // Functions without a @workgroup_size have none.
+      test.equals(wgs("vs"), null);
+      test.equals(wgs("helper"), null);
+    });
+
+    await test("const attribute values", async function (test) {
+      const t = new WgslReflect(`
+        const B = 3;
+        const LOC = 1;
+        const ALIGN = 32;
+        override ID = 7;
+        struct S {
+          @align(ALIGN) a: f32,
+          b: f32
+        }
+        @group(0) @binding(B) var<uniform> u: S;
+        @id(ID) override scale: f32 = 1.0;
+        @vertex fn vs(@location(LOC) pos: vec4f) -> @builtin(position) vec4f { return pos; }`);
+      test.equals(t.uniforms[0].binding, 3);
+      test.equals(t.overrides[1].name, "scale");
+      test.equals(t.overrides[1].id, 7);
+      test.equals(t.entry.vertex[0].inputs[0].location, 1);
+      // A non-numeric attribute value, like a builtin name, is still a string.
+      test.equals(t.entry.vertex[0].outputs[0].location, "position");
+      // @align from a const affects the struct layout.
+      test.equals(t.structs[0].members[1].offset, 4);
+      test.equals(t.structs[0].size, 32);
+    });
+
     await test("texture_depth_multisampled_2d", function (test) {
       const t = new WgslReflect(`
           @group(0) @binding(0) var msaaDepth: texture_2d<f32>;

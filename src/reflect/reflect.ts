@@ -4,13 +4,14 @@
  */
 // import { TokenTypes } from "../wgsl_scanner.js";
 import { Type, Struct, Alias, /* Override, */ Var, type Node, Function, /* VariableExpr, CreateExpr,
-    Let, CallExpr, Call, */ type Argument, type Member, type Attribute, ArrayType, SamplerType, TemplateType, 
+    Let, Const, */ type Expression, /* CallExpr, Call, */ type Argument, type Member, type Attribute, ArrayType, SamplerType, TemplateType, 
     PointerType } from "../wgsl_ast.js";
 // import { _BlockStart, _BlockEnd } from "../wgsl_ast.js";
 import { FunctionInfo, VariableInfo, AliasInfo, /* OverrideInfo, */ PointerInfo,
   StructInfo, TypeInfo, MemberInfo, ArrayInfo, TemplateInfo, /* OutputInfo, */
   InputInfo, /* ArgumentInfo, */ ResourceType, EntryFunctions } from "./info.js";
 // import { isArray } from "../utils/cast.js";
+import { constExprValue /*, workgroupSizeOf */ } from "../utils/const_expr.js";
  
 class _FunctionResources {
   node: Function;
@@ -56,6 +57,18 @@ export class Reflect {
 
   _types: Map<Type, TypeInfo> = new Map();
   _functions: Map<string, _FunctionResources> = new Map();
+  /// The values of module-scope consts and overrides that could be statically
+  /// evaluated, used to resolve things like @workgroup_size(SIZE).
+  _constValues: Map<string, number> = new Map();
+
+  /// Record the value of a module-scope const or override, if it can be
+  /// statically evaluated. An override with no default value is not recorded.
+  _recordConstValue(name: string, value: Expression | null): void {
+    const v = constExprValue(value, this._constValues);
+    if (v !== null) {
+      this._constValues.set(name, v);
+    }
+  }
 
   _isStorageTexture(type: TypeInfo): boolean {
     return (
@@ -67,6 +80,15 @@ export class Reflect {
   }
 
   updateAST(ast: Node[]): void {
+    // Module-scope const and override values are recorded first, because
+    // attribute arguments like @binding(N) or @align(N) can reference them and
+    // are read by the passes below.
+    /* for (const node of ast) {
+      if (node instanceof Const || node instanceof Override) {
+        this._recordConstValue(node.name, node.value);
+      }
+    } */
+
     for (const node of ast) {
       if (node instanceof Function) {
         this._functions.set(node.name, new _FunctionResources(node as Function));
@@ -176,6 +198,7 @@ export class Reflect {
 
         const fn = new FunctionInfo(node.name, stage?.name, node.attributes);
         fn.attributes = node.attributes;
+        // fn.workgroupSize = workgroupSizeOf(node, this._constValues);
         fn.startLine = node.startLine;
         fn.endLine = node.endLine;
         this.functions.push(fn);
@@ -660,7 +683,12 @@ export class Reflect {
       s = s[0];
     }
     const n = parseInt(s);
-    return isNaN(n) ? s : n;
+    if (!isNaN(n)) {
+      return n;
+    }
+    // Not a literal, so it's an identifier: either a module-scope const, or
+    // something that isn't a number at all, such as @builtin(position).
+    return this._constValues.get(s) ?? s;
   }
 
   _getAlias(name: string): TypeInfo | null {
@@ -716,7 +744,9 @@ export class Reflect {
 
     if (type instanceof Struct) {
       const s = type as Struct;
-      const info = new StructInfo(s.name, attributes);
+      // A struct declaration can have its own attributes, which take precedence
+      // over the attributes of whatever is referencing the struct type.
+      const info = new StructInfo(s.name, s.attributes ?? attributes);
       info.startLine = s.startLine;
       info.endLine = s.endLine;
       for (const m of s.members) {
@@ -985,7 +1015,11 @@ export class Reflect {
           return v;
         }
         if (typeof v === "string") {
-          return parseInt(v);
+          const n = parseInt(v);
+          // An identifier rather than a literal: resolve it from the
+          // module-scope consts, falling back to the default if it can't be
+          // statically evaluated.
+          return isNaN(n) ? (this._constValues.get(v) ?? defaultValue) : n;
         }
         return defaultValue;
       }

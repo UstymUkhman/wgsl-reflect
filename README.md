@@ -172,6 +172,8 @@ class TypeInfo {
   name: string;
   // Size of the data used by this type, in bytes
   size: number;
+  // Attributes assigned to this declaration.
+  attributes: Attribute[] | null;
 
   // True if this is an array type, can be cast to ArrayInfo.
   get isArray(): boolean;
@@ -277,6 +279,15 @@ class FunctionInfo {
   // The resources used by the function, including uniform buffers, storage buffers, textures,
   // samplers, and storage textures.
   resources: Array<VariableInfo>;
+  // Attributes assigned to the function declaration.
+  attributes: Attribute[] | null;
+  // The overrides referenced by the function's attributes.
+  overrides: Array<OverrideInfo>;
+  // The [x, y, z] of the @workgroup_size attribute, or null if the function doesn't have one.
+  // Omitted dimensions are 1. Consts and override default values are resolved; a dimension from
+  // an override with no default value is only known at pipeline creation and is reported as 1,
+  // in which case the override is listed in overrides.
+  workgroupSize: [number, number, number] | null;
   // The line in the shader the function definition starts at.
   startLine: number;
   // The line in the shader the function definition ends at.

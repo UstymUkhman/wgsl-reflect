@@ -127,6 +127,7 @@ export declare class FunctionInfo {
     resources: VariableInfo[];
     overrides: OverrideInfo[];
     attributes: Attribute[] | null;
+    workgroupSize: [number, number, number] | null;
     startLine: number;
     endLine: number;
     inUse: boolean;

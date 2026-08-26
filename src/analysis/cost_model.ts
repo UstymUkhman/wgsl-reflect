@@ -24,6 +24,7 @@
 
 import * as AST from "../wgsl_ast.js";
 import { WgslParser } from "../wgsl_parser.js";
+import { constExprValue, workgroupSizeOf } from "../utils/const_expr.js";
 
 // -----------------------------------------------------------------------------
 // Cost dimensions and weights
@@ -370,7 +371,8 @@ class CostTreeBuilder {
             entries.push({
                 name: statement.name,
                 stage,
-                workgroupSize: stage === "compute" ? workgroupSizeOf(statement, this._moduleConsts) : null,
+                workgroupSize: stage === "compute" ?
+                    (workgroupSizeOf(statement, this._moduleConsts) ?? [1, 1, 1]) : null,
                 root,
                 costPerInvocation: root.totalCost,
                 cost: root.total,
@@ -1015,51 +1017,7 @@ class CostTreeBuilder {
      * bounds like `COUNT` or `N * 2`, not to be a general const evaluator.
      */
     private _constValue(expr: AST.Expression | null): number | null {
-        if (!expr) {
-            return null;
-        }
-        if (expr instanceof AST.LiteralExpr) {
-            return literalValue(expr);
-        }
-        if (expr instanceof AST.ConstExpr) {
-            return this._constValue(expr.initializer);
-        }
-        if (expr instanceof AST.VariableExpr) {
-            if (expr.postfix) {
-                return null;
-            }
-            return this._moduleConsts.get(expr.name) ?? null;
-        }
-        if (expr instanceof AST.CreateExpr) {
-            // `i32(4)` / `u32(N)` — a cast around a constant.
-            const args = expr.args ?? [];
-            return args.length === 1 ? this._constValue(args[0]) : null;
-        }
-        if (expr instanceof AST.UnaryOperator) {
-            const v = this._constValue(expr.right);
-            if (v === null) {
-                return null;
-            }
-            return expr.operator === "-" ? -v : expr.operator === "+" ? v : null;
-        }
-        if (expr instanceof AST.BinaryOperator) {
-            const a = this._constValue(expr.left);
-            const b = this._constValue(expr.right);
-            if (a === null || b === null) {
-                return null;
-            }
-            switch (expr.operator) {
-                case "+": return a + b;
-                case "-": return a - b;
-                case "*": return a * b;
-                case "/": return b === 0 ? null : a / b;
-                case "%": return b === 0 ? null : a % b;
-                case "<<": return a << b;
-                case ">>": return a >> b;
-                default: return null;
-            }
-        }
-        return null;
+        return constExprValue(expr, this._moduleConsts);
     }
 
     private _warn(message: string): void {
@@ -1084,24 +1042,6 @@ function stageOf(fn: AST.Function): "vertex" | "fragment" | "compute" | null {
     return null;
 }
 
-function workgroupSizeOf(fn: AST.Function, consts: Map<string, number>): [number, number, number] {
-    for (const attr of fn.attributes ?? []) {
-        if (attr.name !== "workgroup_size") {
-            continue;
-        }
-        const value = attr.value;
-        const parts = Array.isArray(value) ? value : [value];
-        const dims: number[] = [1, 1, 1];
-        for (let i = 0; i < 3 && i < parts.length; ++i) {
-            const raw = parts[i];
-            const n = Number(raw);
-            dims[i] = Number.isFinite(n) ? n : (consts.get(String(raw)) ?? 1);
-        }
-        return [dims[0], dims[1], dims[2]];
-    }
-    return [1, 1, 1];
-}
-
 function classifyStorage(storage: string | null, type: AST.Type | null): VarClass {
     if (storage === "storage" || storage === "uniform") {
         return "buffer";
@@ -1124,17 +1064,6 @@ function rootName(expr: AST.Expression | null): string | null {
     }
     if (expr instanceof AST.ArrayIndex) {
         return null;
-    }
-    return null;
-}
-
-function literalValue(expr: AST.LiteralExpr): number | null {
-    const data = expr.value as unknown as { data?: ArrayLike<number>; value?: number };
-    if (data?.data && data.data.length > 0) {
-        return Number(data.data[0]);
-    }
-    if (typeof data?.value === "number") {
-        return data.value;
     }
     return null;
 }

@@ -6,7 +6,7 @@ import { Command, StatementCommand, CallExprCommand, GotoCommand, BlockCommand,
         ContinueTargetCommand, ContinueCommand, BreakCommand, BreakTargetCommand } from "./exec/command.js";
 import { StackFrame } from "./exec/stack_frame.js";
 import { ExecStack } from "./exec/exec_stack.js";
-import { ScalarData, VectorData, MatrixData, TextureData, SamplerData, TypedData, VoidData, ArrayType, LiteralExpr, Data } from "./wgsl_ast.js";
+import { ScalarData, VectorData, MatrixData, TextureData, SamplerData, TypedData, VoidData, ArrayType, Data } from "./wgsl_ast.js";
 import { StructInfo, TypeInfo, FunctionInfo } from "./reflect/info.js";
 import { VectorTypeSize } from "./utils/matrix.js";
 
@@ -36,11 +36,12 @@ export const QUAD_RENDEZVOUS_BUILTINS: Set<string> = new Set([
 ]);
 
 interface BindingEntry {
-    texture?: { view?: unknown };
+    texture?: unknown;
     descriptor?: unknown;
     uniform?: ArrayBuffer;
     // A GPUSamplerDescriptor (compareFunction, magFilter, addressMode*, ...).
     sampler?: Record<string, unknown>;
+    view?: unknown;
 }
 
 // Per-invocation inputs to a render-stage entry point, keyed by pipeline
@@ -397,7 +398,7 @@ export class WgslDebug {
                                         ? entry.texture as unknown as ArrayBuffer[]
                                         : [entry.texture as unknown as ArrayBuffer];
                                     v.value = new TextureData(mips, typeInfo, entry.descriptor as unknown,
-                                        (entry.texture as unknown as { view?: unknown }).view ?? null);
+                                        entry.view as unknown);
                                 } else if (entry.sampler !== undefined) {
                                     v.value = new SamplerData(entry.sampler as Record<string, unknown>, typeInfo);
                                 } else if (entry.uniform !== undefined) {
