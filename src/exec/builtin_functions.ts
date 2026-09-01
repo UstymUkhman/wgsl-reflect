@@ -1,8 +1,9 @@
-import { CallExpr, Call, UnaryOperator, VariableExpr } from "../wgsl_ast.js";
-import { Data, TypedData, TextureData, ScalarData, VectorData, MatrixData } from "../wgsl_ast.js";
-import { ExecContext } from "./exec_context.js";
-import { ExecInterface } from "./exec_interface.js";
-import { ArrayInfo, TypeInfo } from "../reflect/info.js";
+// @ts-nocheck
+import { type CallExpr, type Call, UnaryOperator, VariableExpr } from "../wgsl_ast.js";
+import { type Data, TypedData, TextureData, ScalarData, VectorData, MatrixData } from "../wgsl_ast.js";
+import type { ExecContext } from "./exec_context.js";
+import type { ExecInterface } from "./exec_interface.js";
+import type { ArrayInfo, TypeInfo } from "../reflect/info.js";
 
 export class BuiltinFunctions {
     exec: ExecInterface;

@@ -1,4 +1,4 @@
-import { Const, Alias, Struct } from "../wgsl_ast.js";
+import type { Const, Alias, Struct } from "../wgsl_ast.js";
 
 export class ParseContext {
   constants: Map<string, Const> = new Map();

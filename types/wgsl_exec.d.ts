@@ -1,10 +1,9 @@
 import { Node, Type, Let, Var, Const, If, For, While, Loop, Assign, Increment, Override, Call, BinaryOperator, LiteralExpr, VariableExpr, CallExpr, CreateExpr, ConstExpr, BitcastExpr, UnaryOperator, Function, Switch } from "./wgsl_ast.js";
-import { Data, ControlData } from "./wgsl_ast.js";
+import { type Data, ControlData } from "./wgsl_ast.js";
 import { Reflect } from "./reflect/reflect.js";
 import { TypeInfo } from "./reflect/info.js";
-import { ExecContext, FunctionRef } from "./exec/exec_context.js";
+import { ExecContext } from "./exec/exec_context.js";
 import { ExecInterface } from "./exec/exec_interface.js";
-import { BuiltinFunctions } from "./exec/builtin_functions.js";
 export declare class WgslExec extends ExecInterface {
     private static readonly _numericScalarTypes;
     private static readonly _vectorTypes;
@@ -13,23 +12,15 @@ export declare class WgslExec extends ExecInterface {
     ast: Node[];
     context: ExecContext;
     reflection: Reflect;
-    builtins: BuiltinFunctions;
     typeInfo: Record<string, TypeInfo>;
     constructor(ast?: Node[], context?: ExecContext);
-    getVariableValue(name: string): number | number[] | null;
-    execute(config?: Object): void;
-    dispatchWorkgroups(kernel: string, dispatchCount: number | number[], bindGroups: Object, config?: Object): void;
     static readonly _breakObj: ControlData;
     static readonly _continueObj: ControlData;
     execStatement(stmt: Node, context: ExecContext): Data | null;
     evalExpression(node: Node, context: ExecContext): Data | null;
     getTypeInfo(type: Type | string): TypeInfo | null;
-    _setOverrides(constants: Object, context: ExecContext): void;
-    _dispatchWorkgroup(f: FunctionRef, workgroup_id: number[], context: ExecContext): void;
-    _dispatchExec(f: FunctionRef, context: ExecContext): void;
     getVariableName(node: Node, context: ExecContext): string | null;
     _execStatements(statements: Node[], context: ExecContext): Data | null;
-    _call(node: Call, context: ExecContext): void;
     _increment(node: Increment, context: ExecContext): void;
     _getVariableData(node: Node, context: ExecContext): Data | null;
     _assign(node: Assign, context: ExecContext): void;
@@ -55,8 +46,6 @@ export declare class WgslExec extends ExecInterface {
     _isMatrixType(data: Data): boolean;
     _isVectorType(data: Data): boolean;
     _evalBinaryOp(node: BinaryOperator, context: ExecContext): Data | null;
-    _evalCall(node: CallExpr, context: ExecContext): Data | null;
-    _callBuiltinFunction(node: CallExpr | Call, context: ExecContext): Data | null;
     _callConstructorValue(node: CreateExpr, context: ExecContext): Data | null;
     _callConstructorVec(node: CreateExpr | LiteralExpr, context: ExecContext): Data | null;
     _callConstructorMatrix(node: CreateExpr | LiteralExpr, context: ExecContext): Data | null;

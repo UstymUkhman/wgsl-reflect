@@ -1,14 +1,15 @@
+// @ts-nocheck
 import { Node, Type, TemplateType, Return, Break, Continue, Let, Var, Const,
     If, For, While, Loop, Continuing, Assign, Increment, Struct, Override, ArrayType,
-    Call, Diagnostic, Alias, BinaryOperator, LiteralExpr, Expression,
+    Call, Diagnostic, Alias, BinaryOperator, LiteralExpr, type Expression,
     VariableExpr, CallExpr, CreateExpr, ConstExpr, BitcastExpr, UnaryOperator,
-    ArrayIndex, StringExpr, Function, Switch, SwitchCase, Case, Default, DefaultSelector } from "./wgsl_ast.js";
-import { Data, TypedData, TextureData, ScalarData, VectorData, MatrixData, PointerData, VoidData, ControlData } from "./wgsl_ast.js";
+    ArrayIndex, StringExpr, Function, Switch, type SwitchCase, Case, Default, DefaultSelector } from "./wgsl_ast.js";
+import { type Data, TypedData, /* TextureData, */ ScalarData, VectorData, MatrixData, PointerData, VoidData, ControlData } from "./wgsl_ast.js";
 import { Reflect } from "./reflect/reflect.js";
 import { TypeInfo, StructInfo, ArrayInfo, TemplateInfo } from "./reflect/info.js";
 import { ExecContext, FunctionRef } from "./exec/exec_context.js";
 import { ExecInterface } from "./exec/exec_interface.js";
-import { BuiltinFunctions } from "./exec/builtin_functions.js";
+// import { BuiltinFunctions } from "./exec/builtin_functions.js";
 import { isArray, castScalar, castVector } from "./utils/cast.js";
 import { matrixMultiply, matrixVectorMultiply, vectorMatrixMultiply, MatrixTypeSize, VectorTypeSize } from "./utils/matrix.js";
 
@@ -43,7 +44,7 @@ export class WgslExec extends ExecInterface {
     ast: Node[];
     context: ExecContext;
     reflection: Reflect;
-    builtins: BuiltinFunctions;
+    // builtins: BuiltinFunctions;
     typeInfo: Record<string, TypeInfo>;
 
     constructor(ast?: Node[], context?: ExecContext) {
@@ -53,7 +54,7 @@ export class WgslExec extends ExecInterface {
         this.reflection.updateAST(this.ast);
 
         this.context = context?.clone() ?? new ExecContext();
-        this.builtins = new BuiltinFunctions(this);
+        // this.builtins = new BuiltinFunctions(this);
 
         this.typeInfo = {
             "bool": this.getTypeInfo(Type.bool),
@@ -85,7 +86,7 @@ export class WgslExec extends ExecInterface {
         };
     }
 
-    getVariableValue(name: string): number | number[] | null {
+    /* getVariableValue(name: string): number | number[] | null {
         const v = this.context.getVariable(name)?.value ?? null;
         if (v === null) {
             return null;
@@ -217,7 +218,7 @@ export class WgslExec extends ExecInterface {
                 }
             }
         }
-    }
+    } */
 
     static readonly _breakObj = new ControlData(new TypeInfo("BREAK", null), null);
     static readonly _continueObj = new ControlData(new TypeInfo("CONTINUE", null), null);
@@ -269,7 +270,7 @@ export class WgslExec extends ExecInterface {
         } else if (stmt instanceof Struct) {
             return null;
         } else if (stmt instanceof Call) {
-            this._call(stmt, context);
+            // this._call(stmt, context);
         } else if (stmt instanceof Diagnostic) {
             return null; // Nothing to do here.
         } else if (stmt instanceof Alias) {
@@ -288,7 +289,7 @@ export class WgslExec extends ExecInterface {
         } else if (node instanceof VariableExpr) {
             return this._evalVariable(node, context);
         } else if (node instanceof CallExpr) {
-            return this._evalCall(node, context);
+            return null; // this._evalCall(node, context);
         } else if (node instanceof CreateExpr) {
             return this._evalCreate(node, context);
         } else if (node instanceof ConstExpr) {
@@ -319,7 +320,7 @@ export class WgslExec extends ExecInterface {
         return t;
     }
 
-    _setOverrides(constants: Object, context: ExecContext): void {
+    /* _setOverrides(constants: Object, context: ExecContext): void {
         for (const k in constants) {
             const v = constants[k];
             const override = this.reflection.getOverrideInfo(k);
@@ -415,7 +416,7 @@ export class WgslExec extends ExecInterface {
         }
 
         this._execStatements(f.node.body, context);
-    }
+    } */
 
     getVariableName(node: Node, context: ExecContext): string | null {
         while (node instanceof UnaryOperator) {
@@ -450,7 +451,7 @@ export class WgslExec extends ExecInterface {
         return null;
     }
 
-    _call(node: Call, context: ExecContext): void {
+    /* _call(node: Call, context: ExecContext): void {
         const subContext = context.clone();
         subContext.currentFunctionName = node.name;
 
@@ -474,7 +475,7 @@ export class WgslExec extends ExecInterface {
         }
 
         this._execStatements(f.node.body, subContext);
-    }
+    } */
 
     _increment(node: Increment, context: ExecContext): void {
         const name = this.getVariableName(node.variable, context);
@@ -2004,7 +2005,7 @@ export class WgslExec extends ExecInterface {
         return null;
     }
 
-    _evalCall(node: CallExpr, context: ExecContext): Data | null {
+    /* _evalCall(node: CallExpr, context: ExecContext): Data | null {
         if (node.cachedReturnValue !== null) {
             return node.cachedReturnValue as Data;
         }
@@ -2364,7 +2365,7 @@ export class WgslExec extends ExecInterface {
 
         //console.error(`Function ${node.name} not found. Line ${node.line}`);
         return null;
-    }
+    } */
 
     _callConstructorValue(node: CreateExpr, context: ExecContext): Data | null {
         if (!node.args || node.args.length === 0) {

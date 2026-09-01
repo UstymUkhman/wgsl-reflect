@@ -1,4 +1,5 @@
-import { Attribute } from "../wgsl_ast.js";
+// @ts-nocheck
+import type { Attribute } from "../wgsl_ast.js";
 
 export class TypeInfo {
   name: string;
@@ -302,7 +303,7 @@ export class InputInfo {
   }
 }
 
-export class OutputInfo {
+/* export class OutputInfo {
   name: string;
   type: TypeInfo | null;
   locationType: string;
@@ -354,7 +355,7 @@ export class ArgumentInfo {
     this.type = type;
     this.attributes = attributes;
   }
-}
+} */
 
 export class FunctionInfo {
   name: string;

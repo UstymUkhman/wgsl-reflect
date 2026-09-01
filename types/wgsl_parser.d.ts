@@ -1,7 +1,11 @@
-import { Token, TokenType } from "./wgsl_scanner.js";
+import { type Token, TokenType } from "./wgsl_scanner.js";
 import * as AST from "./wgsl_ast.js";
 import { WgslExec } from "./wgsl_exec.js";
-import { ParseContext } from "./ast/parse_context.js";
+export declare class ParseContext {
+    constants: Map<string, AST.Const>;
+    aliases: Map<string, AST.Alias>;
+    structs: Map<string, AST.Struct>;
+}
 export declare class WgslParser {
     _tokens: Token[];
     _current: number;

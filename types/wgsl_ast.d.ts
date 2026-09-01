@@ -1,7 +1,7 @@
 import { WgslExec } from "./wgsl_exec.js";
 import { TypeInfo } from "./reflect/info.js";
-import { ExecContext } from "./exec/exec_context.js";
-import { ExecInterface } from "./exec/exec_interface.js";
+import type { ExecContext } from "./exec/exec_context.js";
+import type { ExecInterface } from "./exec/exec_interface.js";
 /**
  * @class Node
  * @category AST
@@ -799,25 +799,4 @@ export declare class TypedData extends Data {
     getSubData(exec: ExecInterface, postfix: Expression | null, context: ExecContext): Data | null;
     toArray(): number[] | Float32Array | Int32Array | Uint32Array | null;
     toString(): string;
-}
-export declare class TextureData extends Data {
-    data: Array<ArrayBuffer | Float32Array | Uint32Array | Int32Array | Uint8Array | Int8Array>;
-    descriptor: Object;
-    view: Object | null;
-    constructor(data: Array<ArrayBuffer | Float32Array | Uint32Array | Int32Array | Uint8Array | Int8Array>, typeInfo: TypeInfo, descriptor: Object, view: Object | null);
-    clone(): Data;
-    get width(): number;
-    get height(): number;
-    get depthOrArrayLayers(): number;
-    get format(): string;
-    get sampleCount(): number;
-    get mipLevelCount(): number;
-    get dimension(): string;
-    getMipLevelSize(level: number): number[];
-    get texelByteSize(): number;
-    get bytesPerRow(): number;
-    get isDepthStencil(): boolean;
-    getGpuSize(): number;
-    getPixel(x: number, y: number, z?: number, mipLevel?: number): number[] | null;
-    setPixel(x: number, y: number, z: number, mipLevel: number, value: number[]): void;
 }

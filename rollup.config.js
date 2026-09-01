@@ -9,6 +9,7 @@ function build(input, format, file, sourcemap) {
             terser({
                 ecma: 2020,
                 compress: {
+                    passes: 2,
                     module: true,
                     toplevel: true,
                     keep_classnames: true,

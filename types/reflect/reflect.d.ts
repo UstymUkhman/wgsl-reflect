@@ -1,5 +1,10 @@
-import { Type, Struct, Alias, Node, Function, Argument, Member, Attribute } from "../wgsl_ast.js";
-import { FunctionInfo, VariableInfo, AliasInfo, OverrideInfo, StructInfo, TypeInfo, MemberInfo, OutputInfo, InputInfo, EntryFunctions } from "./info.js";
+/**
+ * @author Brendan Duncan / https://github.com/brendan-duncan
+ */
+import { Type, Struct, Alias, type Node, Function, /* VariableExpr, CreateExpr,
+    Let, CallExpr, Call, */ type Argument, type Member, type Attribute } from "../wgsl_ast.js";
+import { FunctionInfo, VariableInfo, AliasInfo, /* OverrideInfo, PointerInfo, */ StructInfo, TypeInfo, MemberInfo, // OutputInfo,
+InputInfo, EntryFunctions } from "./info.js";
 declare class _FunctionResources {
     node: Function;
     resources: VariableInfo[] | null;
@@ -15,11 +20,7 @@ declare class _TypeSize {
 export declare class Reflect {
     uniforms: VariableInfo[];
     storage: VariableInfo[];
-    immediates: VariableInfo[];
-    textures: VariableInfo[];
-    samplers: VariableInfo[];
     aliases: AliasInfo[];
-    overrides: OverrideInfo[];
     structs: StructInfo[];
     entry: EntryFunctions;
     functions: FunctionInfo[];
@@ -27,19 +28,9 @@ export declare class Reflect {
     _functions: Map<string, _FunctionResources>;
     _isStorageTexture(type: TypeInfo): boolean;
     updateAST(ast: Node[]): void;
-    getFunctionInfo(name: string): FunctionInfo | null;
-    getStructInfo(name: string): StructInfo | null;
-    getOverrideInfo(name: string): OverrideInfo | null;
     _markStructsInUse(type: TypeInfo): void;
-    _addCalls(fn: Function, calls: Set<FunctionInfo>): void;
-    findResource(group: number, binding: number, entry?: string): VariableInfo;
     _findResource(name: string): VariableInfo | null;
     _markStructsFromAST(type: Type): void;
-    _findResources(fn: Node, isEntry: boolean): VariableInfo[];
-    getBindGroups(): Array<VariableInfo[]>;
-    _getOutputs(type: Type, outputs?: OutputInfo[] | undefined): OutputInfo[];
-    _getStructOutputs(struct: Struct, outputs: OutputInfo[]): void;
-    _getOutputInfo(type: Type): OutputInfo | null;
     _getInputs(args: Argument[], inputs?: InputInfo[] | undefined): InputInfo[];
     _getStructInputs(struct: Struct, inputs: InputInfo[]): void;
     _getInputInfo(node: Member | Argument): InputInfo | null;
@@ -53,10 +44,7 @@ export declare class Reflect {
     _updateStructInfo(struct: StructInfo): void;
     _getTypeSize(type: TypeInfo | MemberInfo | null | undefined): _TypeSize | null;
     _isUniformVar(node: Node): boolean;
-    _isImmediateVar(node: Node): boolean;
     _isStorageVar(node: Node): boolean;
-    _isTextureVar(node: Node): boolean;
-    _isSamplerVar(node: Node): boolean;
     _getAttribute(node: Node, name: string): Attribute | null;
     _getAttributeNum(attributes: Attribute[] | null, name: string, defaultValue: number): number;
     _roundUp(k: number, n: number): number;
@@ -130,7 +118,5 @@ export declare class Reflect {
             size: number;
         };
     };
-    static readonly _textureTypes: string[];
-    static readonly _samplerTypes: string[];
 }
 export {};
